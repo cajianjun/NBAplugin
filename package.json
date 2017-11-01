@@ -1,5 +1,8 @@
 {
-  "name"    : "helloworld",
-  "version" : "0.1.0",
-  "main"    : "main.js"
+  "name": "helloworld",
+  "version": "0.1.0",
+  "main": "main.js",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2"
+  }
 }
