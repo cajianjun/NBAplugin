@@ -5,7 +5,7 @@ let win;
 function createWindow() {
   // 创建窗口并加载页面
   win = new BrowserWindow({width: 400, height: 200,backgroundColor:"#66CD00",frame:false,alwaysOnTop:true});
-  win.loadURL(`file://${__dirname}/index.html`);
+  win.loadURL(`file://${__dirname}/app/index.html`);
 
   // 打开窗口的调试工具
   win.webContents.openDevTools();

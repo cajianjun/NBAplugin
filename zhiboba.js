@@ -8,38 +8,43 @@ var lastPlayId = 0;
 var lastPageId = 0;
 var curSaishiId = 0;
 
-server.download(url, function(data) {
-  if (data) {
-    //console.log(data);
- 
-    var $ = cheerio.load(data);
-    var lis = $("div .content").first().find("li");
-    var labelArr = lis.map(function(i, el) {
-                        // this === el
-                        return $(this).attr('label');
-                      });
-    var idArr = lis.map(function(i, el) {
-                        // this === el
-                        return $(this).attr('id');
-                      });
-    var urls = lis.map(function(i, el) {
-                        // this === el
-                        var length =  $(this).find('a').length;
-                        for(var i = 0;i < length;i++){
-                            if("文字" == $(this).find('a').eq(i).text()){
-                              return $(this).find('a').eq(i).attr("href");
-                            }
-                        }
-                        return "";
-                      });
-    var saishiIndex = show(labelArr);
-    var saishiId = idArr[saishiIndex].replace("saishi","");
-    curSaishiId = saishiId;
-    getMsg();
-  } else {
-      console.log("error");
-  } 
-});
+function list(cb){
+  server.download(url, function(data) {
+    if (data) {
+      //console.log(data);
+   
+      var $ = cheerio.load(data);
+      var lis = $("div .content").first().find("li");
+      var labelArr = lis.map(function(i, el) {
+                          // this === el
+                          return $(this).attr('label');
+                        });
+      var idArr = lis.map(function(i, el) {
+                          // this === el
+                          return $(this).attr('id');
+                        });
+      var urls = lis.map(function(i, el) {
+                          // this === el
+                          var length =  $(this).find('a').length;
+                          for(var i = 0;i < length;i++){
+                              if("文字" == $(this).find('a').eq(i).text()){
+                                return $(this).find('a').eq(i).attr("href");
+                              }
+                          }
+                          return "";
+                        });
+      cb(labelArr);
+      // var saishiIndex = show(labelArr);
+      // var saishiId = idArr[saishiIndex].replace("saishi","");
+      // curSaishiId = saishiId;
+      // getMsg();
+    } else {
+        console.log("error");
+    } 
+  });
+}
+
+
 
 function show(labels){
   var saishiIndex  = 1;
@@ -100,3 +105,5 @@ function play(){
     console.log(item.user_chn + ":" + item.live_text + "      " + item.visit_score + "-" + item.home_score + "      " + item.pid_text);
   }
 }
+
+exports.list = list;
