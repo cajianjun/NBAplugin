@@ -1,4 +1,8 @@
+const { app } = electron;
+const { BrowserWindow } = electron;
+var electron = require('electron');
 var cheerio = require("cheerio");
+
 var server = require("./curl");
  
 var url = 'https://www.zhibo8.cc/';
@@ -15,25 +19,33 @@ function list(cb){
    
       var $ = cheerio.load(data);
       var lis = $("div .content").first().find("li");
-      var labelArr = lis.map(function(i, el) {
+      var basketLabels = [];
+      var basketIdArr = [];
+      var basketLiveUrlsArr = [];
+      var liveList = {};
+      liveList["labels"] = basketLabels;
+      liveList["ids"] = basketIdArr;
+      liveList["urls"] = basketLiveUrlsArr;
+      lis.map(function(i, el) {
                           // this === el
-                          return $(this).attr('label');
-                        });
-      var idArr = lis.map(function(i, el) {
-                          // this === el
-                          return $(this).attr('id');
-                        });
-      var urls = lis.map(function(i, el) {
-                          // this === el
-                          var length =  $(this).find('a').length;
-                          for(var i = 0;i < length;i++){
-                              if("文字" == $(this).find('a').eq(i).text()){
-                                return $(this).find('a').eq(i).attr("href");
-                              }
+                          var labelStr = $(this).attr('label');
+                          if(labelStr.indexOf("CBA") > -1 || labelStr.indexOf("NBA") > -1 ){
+                            basketLabels.push(labelStr);
+                            basketIdArr.push($(this).attr('id'));
+
+                            var tmpLiveUrl = "";
+                            var length =  $(this).find('a').length;
+                            for(var i = 0;i < length;i++){
+                                if("文字" == $(this).find('a').eq(i).text()){
+                                  tmpLiveUrl =  $(this).find('a').eq(i).attr("href");
+                                  break;
+                                }
+                            }
+                            basketLiveUrlsArr.push(tmpLiveUrl)
                           }
-                          return "";
+                          return ;
                         });
-      cb(labelArr);
+      cb(liveList);
       // var saishiIndex = show(labelArr);
       // var saishiId = idArr[saishiIndex].replace("saishi","");
       // curSaishiId = saishiId;
@@ -44,7 +56,18 @@ function list(cb){
   });
 }
 
-
+function enterRoom(){
+    // 创建窗口并加载页面
+  var win = new BrowserWindow({width: 800, height: 400,backgroundColor:"#66CD00"});
+  win.loadURL(`file://${__dirname}/app/room.html`);
+  win.webContents.on('did-finish-load', function(){
+                   win.webContents.send('ondata', {id:"asd",ur:"urllll"});
+               });
+  win.on('closed', () => {
+    win = null;
+  });
+  win.show();//打开一个窗口
+}
 
 function show(labels){
   var saishiIndex  = 1;
@@ -65,8 +88,8 @@ function show(labels){
 }
 
 //起两个定时任务，一个刷新UI，一个定时获取数据
-var taskUI = setInterval(getMsg,2000);
-var taskData = setInterval(play,2000);
+// var taskUI = setInterval(getMsg,2000);
+// var taskData = setInterval(play,2000);
 
 function getMsg(){
   var getIdUrl = "https://dingshi4pc.qiumibao.com/livetext/data/cache/max_sid/" + curSaishiId+ "/0.htm?time=";
@@ -107,3 +130,4 @@ function play(){
 }
 
 exports.list = list;
+exports.enterRoom = enterRoom;
