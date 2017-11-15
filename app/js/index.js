@@ -1,3 +1,4 @@
+(()=>{
 'use strict';
 var zhiboba = require("../zhiboba");
 var list ;
@@ -21,4 +22,5 @@ function eventfun2(target){
 	 + ";url=" + list["urls"][index]);
 	zhiboba.enterRoom();
 }
+})()
 

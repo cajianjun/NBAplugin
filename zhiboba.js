@@ -1,9 +1,8 @@
-const { app } = electron;
-const { BrowserWindow } = electron;
-var electron = require('electron');
-var cheerio = require("cheerio");
+
+const cheerio = require("cheerio");
 
 var server = require("./curl");
+// var main = require("./main");
  
 var url = 'https://www.zhibo8.cc/';
 var gameLiveBodyArr = [];
@@ -57,16 +56,16 @@ function list(cb){
 }
 
 function enterRoom(){
-    // 创建窗口并加载页面
-  var win = new BrowserWindow({width: 800, height: 400,backgroundColor:"#66CD00"});
-  win.loadURL(`file://${__dirname}/app/room.html`);
-  win.webContents.on('did-finish-load', function(){
+  var  win2 = new BrowserWindow({width: 800, height: 400,backgroundColor:"#66CD00"});
+
+  win2.loadURL(`file://${__dirname}/app/room.html`);
+  win2.webContents.on('did-finish-load', function(){
                    win.webContents.send('ondata', {id:"asd",ur:"urllll"});
                });
-  win.on('closed', () => {
-    win = null;
+  win2.on('closed', () => {
+    win2 = null;
   });
-  win.show();//打开一个窗口
+  win2.show();//打开一个窗口
 }
 
 function show(labels){
