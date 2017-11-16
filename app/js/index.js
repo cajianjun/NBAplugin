@@ -1,4 +1,4 @@
-(()=>{
+
 'use strict';
 var zhiboba = require("../zhiboba");
 var list ;
@@ -17,10 +17,10 @@ zhiboba.list((liveList)=>{
 
 function eventfun2(target){
 	var index = parseInt(target.getAttribute("index"));
-	alert("你要看的比赛是：" + list["labels"][index]
+	console.log("你要看的比赛是：" + list["labels"][index]
 	 + ";id=" + list["ids"][index]
 	 + ";url=" + list["urls"][index]);
-	zhiboba.enterRoom();
+	zhiboba.enterRoom({id:list["ids"][index],url:list["urls"][index]});
 }
-})()
+
 

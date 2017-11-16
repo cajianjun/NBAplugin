@@ -3,10 +3,8 @@ const { app } = electron;
 const { BrowserWindow } = electron;
 // global.windows = {}
 let win;
-let win2;
 function createWindow() {
   createwindow1();
-  createwindow2();
 }
 function createwindow1(){
   // 创建窗口并加载页面
@@ -22,20 +20,6 @@ function createwindow1(){
   });
 }
 
-function createwindow2() {
-  // 创建窗口并加载页面
-  // win = new BrowserWindow({width: 800, height: 400,backgroundColor:"#66CD00",frame:false,alwaysOnTop:true});
-  win2 = new BrowserWindow({width: 700, height: 300,backgroundColor:"#66CD00"});
-  win2.loadURL(`file://${__dirname}/app/index.html`);
-
-  // 打开窗口的调试工具
-  win2.webContents.openDevTools();
-  // 窗口关闭的监听
-  win2.show();
-  win.on('closed', () => {
-    win = null;
-  });
-}
 
 // function createLiveRoomWindow(){
 //       // 创建窗口并加载页面

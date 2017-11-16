@@ -55,13 +55,17 @@ function list(cb){
   });
 }
 
-function enterRoom(){
+function enterRoom(roomInfo){
+  const remote = require('electron').remote;
+  const BrowserWindow = remote.BrowserWindow;
+
   var  win2 = new BrowserWindow({width: 800, height: 400,backgroundColor:"#66CD00"});
 
   win2.loadURL(`file://${__dirname}/app/room.html`);
   win2.webContents.on('did-finish-load', function(){
-                   win.webContents.send('ondata', {id:"asd",ur:"urllll"});
+                   win2.webContents.send('ondata',roomInfo);
                });
+  win2.webContents.openDevTools();
   win2.on('closed', () => {
     win2 = null;
   });
@@ -90,9 +94,20 @@ function show(labels){
 // var taskUI = setInterval(getMsg,2000);
 // var taskData = setInterval(play,2000);
 
-function getMsg(){
-  var getIdUrl = "https://dingshi4pc.qiumibao.com/livetext/data/cache/max_sid/" + curSaishiId+ "/0.htm?time=";
-  var getContentUrl = "https://dingshi4pc.qiumibao.com/livetext/data/cache/livetext/" + curSaishiId + "/0/lit_page_2/[pageId].htm?get=";
+function startZhibo(saishiid,cb){
+  var tmpGetMsg = function(){
+    getMsg(saishiid,cb);
+  }
+  setInterval(tmpGetMsg,2000);
+  var tmpPlay = function(){
+    play(cb);
+  }
+  setInterval(tmpPlay,2000);
+}
+
+function getMsg(saishiid,cb){
+  var getIdUrl = "https://dingshi4pc.qiumibao.com/livetext/data/cache/max_sid/" + saishiid+ "/0.htm?time=";
+  var getContentUrl = "https://dingshi4pc.qiumibao.com/livetext/data/cache/livetext/" + saishiid + "/0/lit_page_2/[pageId].htm?get=";
   server.download(getIdUrl + Math.random(),function(data){
     var pageid = parseInt(data);
     if(pageid == lastPageId){
@@ -103,14 +118,22 @@ function getMsg(){
     }
     server.download(getContentUrl.replace("[pageId]",pageid + "") + Math.random(),function(data1){
       if(data1){
-        var liveObjArr = JSON.parse(data1);
-        liveObjArr.map((item,index)=>{
+        var liveObjArr ;
+        try{
+          liveObjArr= JSON.parse(data1);
+        }catch(e){
+          console.log("解析直播内容失败");
+        }
+        if(liveObjArr){
+          liveObjArr.map((item,index)=>{
           if(item.live_id && gameLiveIdArr.indexOf(item.live_id) == -1){
             gameLiveIdArr.push(item.live_id);
             gameLiveBodyArr.push(item);
           }
-          play();
+          play(cb);
         })
+        }
+        
       }
     
     })
@@ -118,15 +141,20 @@ function getMsg(){
 }
 
 
-function play(){
+function play(cb){
   var index = gameLiveIdArr.indexOf(lastPlayId);
   if(index != (gameLiveIdArr.length -1)){
     index ++;
     lastPlayId = gameLiveIdArr[index];
     var item = gameLiveBodyArr[index];
-    console.log(item.user_chn + ":" + item.live_text + "      " + item.visit_score + "-" + item.home_score + "      " + item.pid_text);
+    var displayStr =item.user_chn + ":" + item.live_text + "      " + item.visit_score + "-" + item.home_score + "      " + item.pid_text 
+    console.log(displayStr);
+    if(cb){
+      cb(displayStr);
+    }
   }
 }
 
 exports.list = list;
 exports.enterRoom = enterRoom;
+exports.startZhibo = startZhibo;
