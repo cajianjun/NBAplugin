@@ -55,54 +55,38 @@ function list(cb){
   });
 }
 
-function enterRoom(roomInfo){
+
+
+function enterRoom(info){
   const remote = require('electron').remote;
-  const BrowserWindow = remote.BrowserWindow;
-
-  var  win2 = new BrowserWindow({width: 800, height: 400,backgroundColor:"#66CD00"});
-
-  win2.loadURL(`file://${__dirname}/app/room.html`);
-  win2.webContents.on('did-finish-load', function(){
-                   win2.webContents.send('ondata',roomInfo);
-               });
-  win2.webContents.openDevTools();
-  win2.on('closed', () => {
-    win2 = null;
-  });
-  win2.show();//打开一个窗口
+  var liveRoomWindow = remote.getGlobal("windows").liveRoomWindow;
+  remote.getGlobal("liveInfo").id = info.id;
+  remote.getGlobal("liveInfo").url = info.url;
+  liveRoomWindow.show();
+  liveRoomWindow.webContents.send('ondata', {});
 }
 
-function show(labels){
-  var saishiIndex  = 1;
-  // NBA,湖人,活塞,篮球
-  labels.map((index,item)=>{
-    
-    var strArr = item.split(",");
-    if("NBA" == strArr[0] || "CBA" == strArr[0] ){
-      saishiIndex = index;
-      console.log(strArr[1] + "VS" + strArr[2]);
-      if("山西" == strArr[1] || "山西" == strArr[2]){
-        return false;  
-      }
-      
-    }
-  });
-  return saishiIndex;
+function leaveRoom(){
+  const remote = require('electron').remote;
+  var liveRoomWindow = remote.getGlobal("windows").liveRoomWindow;
+  clearInterval(getMsgInterval);
+  clearInterval(playInterval);
+  liveRoomWindow.hide();
 }
 
-//起两个定时任务，一个刷新UI，一个定时获取数据
-// var taskUI = setInterval(getMsg,2000);
-// var taskData = setInterval(play,2000);
-
-function startZhibo(saishiid,cb){
+var getMsgInterval;
+var playInterval;
+function startZhibo(cb){
+  const remote = require('electron').remote;
+  var saishiid = remote.getGlobal("liveInfo").id;
   var tmpGetMsg = function(){
     getMsg(saishiid,cb);
   }
-  setInterval(tmpGetMsg,2000);
+    getMsgInterval= setInterval(tmpGetMsg,2000);
   var tmpPlay = function(){
     play(cb);
   }
-  setInterval(tmpPlay,2000);
+   playInterval = setInterval(tmpPlay,2000);
 }
 
 function getMsg(saishiid,cb){
@@ -147,8 +131,7 @@ function play(cb){
     index ++;
     lastPlayId = gameLiveIdArr[index];
     var item = gameLiveBodyArr[index];
-    var displayStr =item.user_chn + ":" + item.live_text + "      " + item.visit_score + "-" + item.home_score + "      " + item.pid_text 
-    console.log(displayStr);
+    var displayStr =item.user_chn + ":" + item.live_text + "      " + item.visit_score + "-" + item.home_score + "      " + item.pid_text ;
     if(cb){
       cb(displayStr);
     }
@@ -157,4 +140,5 @@ function play(cb){
 
 exports.list = list;
 exports.enterRoom = enterRoom;
-exports.startZhibo = startZhibo;
+exports.startZhibo  = startZhibo ;
+exports.leaveRoom = leaveRoom;

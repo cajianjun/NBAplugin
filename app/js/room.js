@@ -9,12 +9,18 @@ var label1 = document.getElementById("label1");
 var label2 = document.getElementById("label2");
 var roomInfo ;
 
-ipcRenderer.on('ondata', function(event, msg) { // 监听父页面定义的端口
-    console.log("roomInfo = " + JSON.stringify(msg))
-    roomInfo = msg;
-    zhiboba.startZhibo(msg["id"],showLiveMsg);
+ipcRenderer.on('ondata', function(event, msg) { // 监听父页面定义的事件
+	console.log("start zhibo")
+    zhiboba.startZhibo(showLiveMsg);
 });
 
 function showLiveMsg(msg){
+	label2.innerHTML = label1.innerHTML;
+	label1.innerHTML = msg;
+}
 
+function leave(target){
+	label2.innerHTML = "";
+	label1.innerHTML = "";
+	zhiboba.leaveRoom();
 }

@@ -1,15 +1,28 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Live content</title>
-  </head>
-  <body>
-    <h1>Live content</h1>
-    <div id="content">
-    <a id="label1"></a>
-    <a id="label2"></a>
-    </div>
-    <script src="js/room.js"></script>
-  </body>
+   <head>
+      <title>赛事列表</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <!-- 引入 Bootstrap -->
+      <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+   </head>
+   <body>
+        <div id="content">
+<!--           <h1>阿斯顿大时代</h1> -->
+          <!-- <input type='button' onclick='leave(this)' value='离开'/>  -->
+            <!-- <button type="button" class="btn btn-default"> -->
+                <span id="exit" class="glyphicon glyphicon-remove"></span>
+            <!-- </button> -->
+          <p id="label1">asdasdasd</p>
+          <p id="label2">asdadasdasdsd</p>
+        </div>
+        
+        <!-- jQuery (Bootstrap 的 JavaScript 插件需要引入 jQuery) -->
+        <script src="js/jquery.min.js"></script>
+        <script>if (typeof module === 'object') {window.jQuery = window.$ = module.exports;};</script>
+      <!-- 包括所有已编译的插件 -->
+        <script src="js/bootstrap.min.js"></script>
+
+        <script src="js/room.js"></script>
+   </body>
 </html>
