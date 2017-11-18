@@ -9,6 +9,8 @@ var label1 = document.getElementById("label1");
 var label2 = document.getElementById("label2");
 var roomInfo ;
 
+$("#exit").click(leave);
+
 ipcRenderer.on('ondata', function(event, msg) { // 监听父页面定义的事件
 	console.log("start zhibo")
     zhiboba.startZhibo(showLiveMsg);
