@@ -90,6 +90,7 @@ function startZhibo(cb){
 }
 
 function getMsg(saishiid,cb){
+  saishiid = saishiid.replace("saishi","");
   var getIdUrl = "https://dingshi4pc.qiumibao.com/livetext/data/cache/max_sid/" + saishiid+ "/0.htm?time=";
   var getContentUrl = "https://dingshi4pc.qiumibao.com/livetext/data/cache/livetext/" + saishiid + "/0/lit_page_2/[pageId].htm?get=";
   server.download(getIdUrl + Math.random(),function(data){
